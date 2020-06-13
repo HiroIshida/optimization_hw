@@ -60,25 +60,32 @@ function gen_update_nesterov(L)
 end
 
 function solve(func, x_init, x_optimial, update_method; N_itr=10000)
-    f_seq = zeros(N_itr)
-    time_seq = zeros(N_itr)
+    t_init = time()
+    time_seq = []
+    err_seq = []
     
     f_optimal = func(x_optimial)
     x = x_init
-    for i in 1:N_itr
+    for i in 1:N_itr * 1000
         x = update_method(func, x)
 
         # result
         f_now = func(x)
-        f_seq[i] = f_now - f_optimal
-        time_seq[i] = time()
+        err = f_now - f_optimal
+        push!(err_seq, err) 
+
+        t = time() - t_init
+        push!(time_seq, t)
+        println("vis")
+        println("time: " * string(t))
+        println("err: " * string(err))
 
         # print
-        println(i)
-        err = abs(f_optimal - f_now)
-        println("err: " * string(err))
+        if t * 1e3 > 30000.0
+            break
+        end
     end
-    return f_seq, time_seq
+    return err_seq, time_seq
 end
 
 function post_process(err_seq)
@@ -109,15 +116,15 @@ function single_run(n, nesterov)
     update_rule = nesterov ? gen_update_nesterov(L) : update_gradient_descent
     err_seq, time_seq = solve(f, w_init, w_sol, update_rule; N_itr=30000)
     err_seq_processed = post_process(err_seq)
-    data = Dict("err_seq"=>err_seq, "time_seq"=>time_seq, "err_seq_processed"=>err_seq_processed)
+    data = Dict("err_seq"=>err_seq, "time_seq"=>time_seq, "err_seq_processed"=>err_seq_processed, "L"=>L)
     return data
 end
 
 nesterov = false
 for nesterov in [true, false]
-    for n in [4, 32, 128]
+    for n in [32, 64, 128]
         data = single_run(n, nesterov)
-        filename = "json/n"* string(n) * "_" * (nesterov ? "nesterov" : "grad") * ".json"
+        filename = "json/" * (nesterov ? "nesterov" : "grad") * "_n" * string(n)* ".json"
         open(filename, "w") do f
             JSON.print(f, data)
         end
