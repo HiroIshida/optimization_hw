@@ -35,18 +35,22 @@ for n in [32, 64, 128]:
     fig.set_size_inches(12, 4.5)
 
     ax1.plot(data_grad['err_seq'], c='r', linewidth=2.0)
+    """
     f = expfit(data_grad['err_seq'])
     n_end = len(data_grad['err_seq'])
     X = np.linspace(0, n_end)
     Y_approx = f(X)
     ax1.plot(X, Y_approx, c='gray', linewidth=3.0, linestyle=':')
+    """
 
     ax1.plot(data_nest['err_seq'], c='b', linewidth=2.0)
+    """
     f = expfit(data_nest['err_seq_processed'])
     n_end = len(data_nest['err_seq'])
     X = np.linspace(0, n_end)
     Y_approx = f(X)
     ax1.plot(X, Y_approx, c='chocolate', linewidth=3.0, linestyle=':')
+    """
 
     ax1.set_yscale('log', basey=10)
     ax1.legend(["GD", "GD-approx", "NAG", "NAG-approx"], loc=0)

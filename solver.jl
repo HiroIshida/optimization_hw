@@ -112,7 +112,7 @@ function single_run(n, nesterov)
     f(x) = norm(b - A*x)^2
     w_init = randn(n, 1)
 
-    L = norm(compute_gradient(f, w_init))/norm(w_sol - w_init) * n
+    L = norm(compute_gradient(f, w_sol) - compute_gradient(f, w_init))/norm(w_sol - w_init) * n
     update_rule = nesterov ? gen_update_nesterov(L) : update_gradient_descent
     err_seq, time_seq = solve(f, w_init, w_sol, update_rule; N_itr=30000)
     err_seq_processed = post_process(err_seq)
