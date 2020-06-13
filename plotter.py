@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import matplotlib.pyplot as plt
 import numpy as np
 import json
@@ -31,7 +32,7 @@ for n in [32, 64, 128]:
     data_grad = whole_data[("grad", n)]
 
     fig, (ax1, ax2) = plt.subplots(1, 2)
-    fig.set_size_inches(14, 4.5)
+    fig.set_size_inches(12, 4.5)
 
     ax1.plot(data_grad['err_seq'], c='r', linewidth=2.0)
     f = expfit(data_grad['err_seq'])
@@ -49,19 +50,20 @@ for n in [32, 64, 128]:
 
     ax1.set_yscale('log', basey=10)
     ax1.legend(["GD", "GD-approx", "NAG", "NAG-approx"], loc=0)
-    ax1.set_xlabel("iteration")
-    ax1.set_ylabel("error")
+    ax1.set_xlabel("iteration", fontsize=12)
+    ax1.set_ylabel("error", fontsize=12)
 
     ax2.plot(data_grad['err_seq_processed'], data_grad['time_seq'], c='r', linewidth=1)
     ax2.plot(data_nest['err_seq_processed'], data_nest['time_seq'], c='b', linewidth=1)
     ax2.legend(["GD", "NAG"], loc=2)
-    ax2.set_xlabel("accuracy")
-    ax2.set_ylabel("time")
+    ax2.set_xlabel("accuracy", fontsize=12)
+    ax2.set_ylabel("time [sec]", fontsize=12)
 
     err_seqs = data_grad['err_seq_processed'] + data_nest['err_seq_processed']
     ax2.set_xlim(max(err_seqs), min(err_seqs)) # inverted
     ax2.set_xscale('log', basex=10)
-    plt.savefig("n"+str(n)+".pdf", format="pdf", dpi=300, transparent=True)
-    #plt.show()
+    #fig.subplots_adjust(bottom=0.2)
+    plt.savefig("figs/n"+str(n)+".png", format="png", dpi=300)
+    plt.show()
 
 
